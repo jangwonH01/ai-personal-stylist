@@ -54,22 +54,51 @@ function makeLooks(profile, photoLevel) {
       : '사진 없이 프로필 기반 추천입니다. 사진 업로드 시 정확도가 올라갑니다.'
 
   const sets = byOccasion[profile.occasion] || byOccasion.casual
-  const styleKey = profile.genderStyle === '남성' ? 'man' : 'woman'
-  const occWord = profile.occasion === 'office' ? 'office outfit' : profile.occasion === 'date' ? 'date fashion' : 'casual street style'
 
-  const buildImagePair = (idx) => {
-    const c1 = encodeURIComponent(colors[(idx + 1) % colors.length])
-    const c2 = encodeURIComponent(colors[(idx + 3) % colors.length])
-    return [
-      `https://source.unsplash.com/900x1200/?${styleKey},${occWord},${c1}`,
-      `https://source.unsplash.com/900x1200/?${styleKey},${occWord},${c2}`,
-    ]
+  const LOOKBOOK = {
+    woman: {
+      office: [
+        ['https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1551232864-3f0890e580d9?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1495385794356-15371f348c31?auto=format&fit=crop&w=900&q=80'],
+      ],
+      date: [
+        ['https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1495121605193-b116b5b09a8c?auto=format&fit=crop&w=900&q=80'],
+      ],
+      casual: [
+        ['https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80'],
+      ],
+    },
+    man: {
+      office: [
+        ['https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1615109398623-88346a601842?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80'],
+      ],
+      date: [
+        ['https://images.unsplash.com/photo-1610652492500-ded49ceeb378?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1479064555552-3ef4979f8908?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80'],
+      ],
+      casual: [
+        ['https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1472417583565-62e7bdeda490?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1614252369475-531eba835eb1?auto=format&fit=crop&w=900&q=80'],
+        ['https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=900&q=80','https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80'],
+      ],
+    },
   }
+
+  const styleKey = profile.genderStyle === '남성' ? 'man' : 'woman'
+  const imageSet = (LOOKBOOK[styleKey] && LOOKBOOK[styleKey][profile.occasion]) || LOOKBOOK[styleKey].casual
 
   return sets.map((items, idx) => ({
     title: `추천 코디 ${idx + 1}`,
     items,
-    images: buildImagePair(idx),
+    images: imageSet[idx],
     reason: idx === 0 ? concernTip : '톤/상황/예산을 함께 반영한 조합입니다.',
     budget: priceTag,
     tip: photoTip,
